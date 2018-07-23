@@ -1,5 +1,4 @@
-const canvasWidth = 400;
-const canvasHeight = 700;
+import Screen from "./Screen";
 
 export default class Statistic {
   constructor() {
@@ -13,11 +12,25 @@ export default class Statistic {
   showStatistic(ctx) {
     ctx.font = "20px Comic Sans MS";
     ctx.textAlign = "center";
-    ctx.fillText("strike:", 340, 50);
-    ctx.fillText(this.strike, 320, 100);
+    ctx.fillText(
+      "strike:",
+      parseInt(Screen.canvasWidth * (9 / 10)),
+      parseInt(Screen.canvasHeight * (2 / 20))
+    );
+    ctx.fillText(
+      this.strike,
+      parseInt(Screen.canvasWidth * (9 / 10)),
+      parseInt(Screen.canvasHeight * (3 / 20))
+    );
   }
   gameOver() {
     this.active = false;
     this.strike = 0;
+  }
+  restart() {
+    if (this.active) {
+      return;
+    }
+    this.active = true;
   }
 }

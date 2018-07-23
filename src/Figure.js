@@ -1,15 +1,10 @@
 import Point from "./Point";
-const screenWith = 300;
-const screenHeight = 600;
-const width = 10;
-const height = 20;
-const cellWidth = screenWith / width;
-const cellHeight = screenHeight / height;
+import Screen from "./Screen";
 
 export default class Figure {
   constructor(points, center) {
     this.points = points;
-    this.position = new Point(Math.round(width / 2), 0);
+    this.position = new Point(Math.round(Screen.width / 2), 0);
     this.center = center;
     this.lastMoveDown = 0;
     this.speed = 500;
@@ -72,9 +67,9 @@ export default class Figure {
   }
   draw(ctx) {
     this.getPoints().forEach(p => {
-      const x = p.x * cellWidth + 2;
-      const y = p.y * cellHeight + 2;
-      ctx.fillRect(x, y, cellWidth - 4, cellHeight - 4);
+      const x = p.x * Screen.cellWidth + 2;
+      const y = p.y * Screen.cellHeight + 2;
+      ctx.fillRect(x, y, Screen.cellWidth - 4, Screen.cellHeight - 4);
     });
   }
 }

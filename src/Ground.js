@@ -1,9 +1,4 @@
-const screenWith = 300;
-const screenHeight = 600;
-const width = 10;
-const height = 20;
-const cellWidth = screenWith / width;
-const cellHeight = screenHeight / height;
+import Screen from "./Screen";
 
 export default class Ground {
   constructor(points = [], lineDelete, gameOver) {
@@ -11,9 +6,9 @@ export default class Ground {
     this.matrix = [];
     this.lineDelete = lineDelete;
     this.gameOver = gameOver;
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < Screen.width; x++) {
       const column = [];
-      for (let y = 0; y < height; y++) {
+      for (let y = 0; y < Screen.height; y++) {
         column.push(false);
       }
       this.matrix.push(column);
@@ -23,7 +18,12 @@ export default class Ground {
     });
   }
   contains(point) {
-    if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height) {
+    if (
+      point.x < 0 ||
+      point.x >= Screen.width ||
+      point.y < 0 ||
+      point.y >= Screen.height
+    ) {
       return true;
     }
     return this.matrix[point.x][point.y];
@@ -39,7 +39,7 @@ export default class Ground {
     this.gameEnd();
   }
   isRowFull(y) {
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < Screen.width; x++) {
       if (!this.matrix[x][y]) {
         return false;
       }
@@ -47,16 +47,16 @@ export default class Ground {
     return true;
   }
   removeFull() {
-    let y = height - 1;
+    let y = Screen.height - 1;
     while (y >= 0) {
       if (this.isRowFull(y)) {
         this.lineDelete();
         for (let ym = y - 1; ym >= 0; ym--) {
-          for (let x = 0; x < width; x++) {
+          for (let x = 0; x < Screen.width; x++) {
             this.matrix[x][ym + 1] = this.matrix[x][ym];
           }
         }
-        for (let x = 0; x < width; x++) {
+        for (let x = 0; x < Screen.width; x++) {
           this.matrix[0][x] = false;
         }
       } else {
@@ -66,18 +66,23 @@ export default class Ground {
     return this.strike;
   }
   draw(ctx) {
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
+    for (let x = 0; x < Screen.width; x++) {
+      for (let y = 0; y < Screen.height; y++) {
         if (this.matrix[x][y]) {
-          const screenX = x * cellWidth + 2;
-          const screenY = y * cellHeight + 2;
-          ctx.fillRect(screenX, screenY, cellWidth - 4, cellHeight - 4);
+          const screenX = x * Screen.cellWidth + 2;
+          const screenY = y * Screen.cellHeight + 2;
+          ctx.fillRect(
+            screenX,
+            screenY,
+            Screen.cellWidth - 4,
+            Screen.cellHeight - 4
+          );
         }
       }
     }
   }
   gameEnd() {
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < Screen.width; x++) {
       if (this.matrix[x][0]) {
         this.gameOver();
       }
