@@ -10,7 +10,7 @@ export default class Statistic {
     this.strike++;
   }
   showStatistic(ctx) {
-    ctx.font = "20px Comic Sans MS";
+    ctx.font = "18px Comic Sans MS";
     ctx.textAlign = "center";
     ctx.fillText(
       "strike:",

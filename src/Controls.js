@@ -1,4 +1,4 @@
-import Screen from "./Screen";
+import Screen, { screenW, screenH } from "./Screen";
 import Point from "./Point";
 import addTouches from "./Touchable";
 
@@ -8,17 +8,19 @@ class Rect {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.touched = 0;
-    this.actions = [];
+    this.touched = false;
+    this.actionDown = undefined;
+    this.actionUp = undefined;
   }
   onTouchStart(point) {
     if (this.contains(point)) {
       this.touched = true;
-      this.actions.forEach(action => action());
+      this.actionDown();
     }
   }
   onTouchEnd() {
     this.touched = false;
+    this.actionUp();
   }
   contains(point) {
     return (
@@ -29,42 +31,47 @@ class Rect {
     );
   }
   show(ctx) {
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    ctx.strokeRect(
+      screenW(this.x),
+      screenH(this.y),
+      screenW(this.width),
+      screenH(this.height)
+    );
     if (this.touched) {
-      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.fillRect(
+        screenW(this.x),
+        screenH(this.y),
+        screenW(this.width),
+        screenH(this.height)
+      );
     }
   }
-  addAction(action) {
-    this.actions.push(action);
+  addActionDown(action) {
+    this.actionDown = action;
+  }
+  addActionUp(action) {
+    this.actionUp = action;
+  }
+  mouseDown() {
+    this.touched = true;
+    console.log(this);
+    this.actionDown();
+  }
+  mouseUp() {
+    if (this.actionUp) {
+      this.touched = false;
+      this.actionUp();
+    }
   }
 }
 
 class Controls {
   constructor() {
-    this.left = new Rect(
-      0,
-      Screen.canvasHeight * (86 / 100),
-      Screen.canvasWidth * (1 / 3) * (95 / 100),
-      Screen.canvasHeight * (9 / 100) - 2
-    );
-    this.right = new Rect(
-      Screen.canvasWidth * (2 / 3),
-      Screen.canvasHeight * (86 / 100),
-      Screen.canvasWidth * (1 / 3) * (95 / 100),
-      Screen.canvasHeight * (9 / 100) - 2
-    );
-    this.mid = new Rect(
-      Screen.canvasWidth / 3,
-      Screen.canvasHeight * (81 / 100),
-      Screen.canvasWidth * (1 / 3) * (95 / 100),
-      Screen.canvasHeight * (9 / 100) - 2
-    );
-    this.down = new Rect(
-      Screen.canvasWidth / 3,
-      Screen.canvasHeight * (91 / 100),
-      Screen.canvasWidth * (1 / 3) * (95 / 100),
-      Screen.canvasHeight * (9 / 100) - 2
-    );
+    this.left = new Rect(3, 86, 28, 9);
+    this.right = new Rect(70, 86, 28, 9);
+    this.mid = new Rect(35, 82, 31, 8);
+    this.down = new Rect(35, 90, 31, 8);
+    window.left = this.left;
     addTouches(this.left);
     addTouches(this.right);
     addTouches(this.mid);
