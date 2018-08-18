@@ -6,6 +6,8 @@
   "dependencies": {
     "npm": "^6.1.0",
     "path": "^0.12.7",
+    "ts-loader": "^4.5.0",
+    "typescript": "^3.0.1",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8"
   },
