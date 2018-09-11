@@ -1,4 +1,4 @@
-import drawGrid from "./Grid";
+import drawGrid from "./Grid.ts";
 import Screen from "./Screen";
 import router from "./Router";
 import Point from "./Point";
@@ -14,8 +14,8 @@ window.init = function init(sWidth, sHeight) {
   window.screen = Screen;
   Screen.canvasWidth = sWidth;
   Screen.canvasHeight = sHeight;
-  Screen.screenWidth = parseInt(sWidth * 0.8);
-  Screen.screenHeight = parseInt(sHeight * 0.8);
+  Screen.screenWidth = sWidth;
+  Screen.screenHeight = sHeight;
   Screen.cellWidth = Screen.screenWidth / Screen.width;
   Screen.cellHeight = Screen.screenHeight / Screen.height;
   const canvas = document.getElementById("canvas");

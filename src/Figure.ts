@@ -2,13 +2,10 @@ import Point from "./Point";
 import Screen from "./Screen";
 
 export default class Figure {
-  constructor(points, center) {
-    this.points = points;
-    this.position = new Point(Math.round(Screen.width / 2), 0);
-    this.center = center;
-    this.lastMoveDown = 0;
-    this.speed = 500;
-  }
+  private position = new Point(Math.round(Screen.width / 2), 0);
+  private lastMoveDown = 0;
+  private speed = 500;
+  constructor(private points, private center) {}
   intersects(ground) {
     const fPoints = this.getPoints();
     for (let i = 0; i < fPoints.length; i++) {

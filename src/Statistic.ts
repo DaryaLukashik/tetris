@@ -1,6 +1,9 @@
 import Screen from "./Screen";
 
 export default class Statistic {
+  protected leval;
+  protected strike;
+  public active;
   constructor() {
     this.leval = 0;
     this.strike = 0;
@@ -10,17 +13,18 @@ export default class Statistic {
     this.strike++;
   }
   showStatistic(ctx) {
-    ctx.font = "18px Comic Sans MS";
+    ctx.font = "bold 90px sans-serif";
+    ctx.fillStyle = "rgba(1, 0, 0, 0.2)";
     ctx.textAlign = "center";
-    ctx.fillText(
-      "strike:",
-      parseInt(Screen.canvasWidth * (9 / 10)),
-      parseInt(Screen.canvasHeight * (2 / 20))
-    );
+    // ctx.fillText(
+    //   "strike:",
+    //   Screen.canvasWidth * (4 / 10),
+    //   Screen.canvasHeight * (2 / 5)
+    // );
     ctx.fillText(
       this.strike,
-      parseInt(Screen.canvasWidth * (9 / 10)),
-      parseInt(Screen.canvasHeight * (3 / 20))
+      Screen.canvasWidth * (1 / 2),
+      Screen.canvasHeight * (1 / 3)
     );
   }
   gameOver() {

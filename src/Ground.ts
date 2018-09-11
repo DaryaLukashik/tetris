@@ -1,11 +1,11 @@
 import Screen from "./Screen";
 
 export default class Ground {
-  constructor(points = [], lineDelete, gameOver) {
+  private strike;
+  private matrix;
+  constructor(private points = [], protected lineDelete, protected gameOver) {
     this.strike = 0;
     this.matrix = [];
-    this.lineDelete = lineDelete;
-    this.gameOver = gameOver;
     for (let x = 0; x < Screen.width; x++) {
       const column = [];
       for (let y = 0; y < Screen.height; y++) {
@@ -71,6 +71,7 @@ export default class Ground {
         if (this.matrix[x][y]) {
           const screenX = x * Screen.cellWidth + 2;
           const screenY = y * Screen.cellHeight + 2;
+          ctx.fillStyle = "rgba(1, 0, 0, 0.5)";
           ctx.fillRect(
             screenX,
             screenY,

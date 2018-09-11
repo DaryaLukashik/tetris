@@ -4,6 +4,7 @@ import Ground from "./Ground";
 import Controls from "./Controls";
 import drawGrid from "./Grid";
 import Screen from "./Screen";
+import router from "./Router";
 
 let figure = makeFigure();
 let gameStatistic = new Statistic();
@@ -15,24 +16,21 @@ const controls = new Controls();
 
 export default class Game {
   constructor() {
-    controls.left.addActionDown(moveLeft);
-    controls.right.addActionDown(moveRight);
-    controls.mid.addActionDown(rotateFigure);
-    controls.down.addActionDown(speedUp);
-    controls.down.addActionUp(speedNormal);
+    controls.leftSide.addActionDown(moveLeft);
+    controls.rightSide.addActionDown(moveRight);
+  }
+  restart() {
+    ground = new Ground([], statistic, gameOver);
+    figure = makeFigure();
+    gameStatistic = new Statistic();
   }
   draw(ctx, time) {
+    ctx.fillStyle = "rgba(1, 0, 0, 0.3)";
     ctx.strokeRect(0, 0, Screen.screenWidth, Screen.screenHeight);
-    ctx.strokeRect(
-      parseInt(Screen.canvasWidth * (88 / 100)),
-      parseInt(Screen.canvasHeight * (4 / 20)),
-      20,
-      20
-    );
     physics(time);
-    controls.show(ctx);
-    gameStatistic.showStatistic(ctx);
     if (gameStatistic.active) {
+      gameStatistic.showStatistic(ctx);
+      ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
       drawGrid(
         Screen.width,
         Screen.height,
@@ -45,11 +43,15 @@ export default class Game {
       figure.draw(ctx);
       ground.draw(ctx);
     } else {
-      ctx.fillText(
-        "Game Over",
-        Screen.screenWidth / 2,
-        Screen.screenHeight / 2
-      );
+      router.toGameOver();
+      // ctx.font = "bold 40px sans-serif";
+      // ctx.textAlign = "center";
+      // ctx.fillText(
+      //   "Game Over",
+      //   Screen.screenWidth / 2,
+      //   Screen.screenHeight / 6
+      // );
+      // router.goToMenu();
     }
   }
 }
@@ -89,7 +91,7 @@ function speedNormal() {
   figure.speedNormal();
 }
 
-window.keyDown = function keyDown(event) {
+window.onkeydown = function keyDown(event) {
   switch (event.key) {
     case "ArrowRight":
       moveRight();
@@ -106,7 +108,7 @@ window.keyDown = function keyDown(event) {
   }
 };
 
-window.keyUp = function keyUp(event) {
+window.onkeyup = function keyUp(event) {
   if (event.key == "ArrowDown") {
     speedNormal();
   }

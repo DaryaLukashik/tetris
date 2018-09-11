@@ -1,8 +1,5 @@
 export default class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
+  constructor(private x, private y) {}
   changeX(diff) {
     return new Point(this.x + diff, this.y);
   }
