@@ -5,8 +5,8 @@ import Controls from "./Controls";
 import drawGrid from "./Grid";
 import Screen from "./Screen";
 import router from "./Router";
+import Figure from "./Figure";
 
-let figure = makeFigure();
 let gameStatistic = new Statistic();
 const gameOver = () => {
   gameStatistic.gameOver();
@@ -15,104 +15,121 @@ let ground = new Ground([], statistic, gameOver);
 const controls = new Controls();
 
 export default class Game {
+  private figure: Figure;
+  private pause: boolean
   constructor() {
-    controls.leftSide.addActionDown(moveLeft);
-    controls.rightSide.addActionDown(moveRight);
+    controls.leftSide.addActionDown(() => this.moveLeft());
+    controls.rightSide.addActionDown(() => this.moveRight());
+    this.figure = makeFigure();
+    this.pause = false
   }
   restart() {
     ground = new Ground([], statistic, gameOver);
+    let figure = makeFigure();
     figure = makeFigure();
     gameStatistic = new Statistic();
+  }
+  drawActiveGame(ctx, figure) {
+    gameStatistic.showStatistic(ctx);
+    ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
+    drawGrid(
+      Screen.width,
+      Screen.height,
+      Screen.cellWidth,
+      Screen.cellHeight,
+      Screen.screenWidth,
+      Screen.screenHeight,
+      ctx
+    );
+    figure.draw(ctx);
+    ground.draw(ctx);
+  }
+  drawPauseActiveGame(ctx, figure) {
+    gameStatistic.showStatistic(ctx);
+    ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
+    drawGrid(
+      Screen.width,
+      Screen.height,
+      Screen.cellWidth,
+      Screen.cellHeight,
+      Screen.screenWidth,
+      Screen.screenHeight,
+      ctx
+    );
+    figure.draw(ctx);
+    ground.draw(ctx);
+    ctx.textAlign = "center";
+    ctx.fillText(
+     " Pause",
+      Screen.canvasWidth/2,
+      Screen.canvasHeight/2
+    );
+  }
+  drawNotActiveGame(ctx) {
+    drawGrid(
+      Screen.width,
+      Screen.height,
+      Screen.cellWidth,
+      Screen.cellHeight,
+      Screen.screenWidth,
+      Screen.screenHeight,
+      ctx
+    );
+    ground.draw(ctx);
+    setTimeout(() => {
+      router.toGameOver();
+    }, 3000);
   }
   draw(ctx, time) {
     ctx.fillStyle = "rgba(1, 0, 0, 0.3)";
     ctx.strokeRect(0, 0, Screen.screenWidth, Screen.screenHeight);
-    physics(time);
-    if (gameStatistic.active) {
-      gameStatistic.showStatistic(ctx);
-      ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
-      drawGrid(
-        Screen.width,
-        Screen.height,
-        Screen.cellWidth,
-        Screen.cellHeight,
-        Screen.screenWidth,
-        Screen.screenHeight,
-        ctx
-      );
-      figure.draw(ctx);
-      ground.draw(ctx);
-    } else {
-      router.toGameOver();
-      // ctx.font = "bold 40px sans-serif";
-      // ctx.textAlign = "center";
-      // ctx.fillText(
-      //   "Game Over",
-      //   Screen.screenWidth / 2,
-      //   Screen.screenHeight / 6
-      // );
-      // router.goToMenu();
+    if (gameStatistic.active && !this.pause) {
+      this.physics(time);
+      this.drawActiveGame(ctx, this.figure);
+    } else if(gameStatistic.active && this.pause) {
+      this.drawPauseActiveGame(ctx, this.figure);
+    }
+    else{
+      this.drawNotActiveGame(ctx);
     }
   }
-}
-
-function physics(time) {
-  figure.moveDown(time);
-  if (figure.intersects(ground)) {
-    figure.moveUp();
-    ground.addPoints(figure.getPoints());
-    figure = makeFigure();
+  physics(time) {
+    this.figure.moveDown(time);
+    if (this.figure.intersects(ground)) {
+      this.figure.moveUp();
+      ground.addPoints(this.figure.getPoints());
+      this.figure = makeFigure();
+    }
+  }
+  moveLeft() {
+    if(!this.pause){
+      this.figure.moveLeft();
+      if (this.figure.intersects(ground)) {
+        this.figure.moveRight();
+      }
+    }
+  }
+  moveRight() {
+    if(!this.pause){this.figure.moveRight();
+      if (this.figure.intersects(ground)) {
+        this.figure.moveLeft();
+      }}
+    
+  }
+  rotateFigure() {
+    if(!this.pause){this.figure.rotate(ground);}
+    
+  }
+  speedUp() {
+    this.figure.speedUp();
+  }
+  speedNormal() {
+    this.figure.speedNormal();
+  }
+  gamePause(){
+    this.pause = !this.pause
   }
 }
-
-function moveLeft() {
-  figure.moveLeft();
-  if (figure.intersects(ground)) {
-    figure.moveRight();
-  }
-}
-
-function moveRight() {
-  figure.moveRight();
-  if (figure.intersects(ground)) {
-    figure.moveLeft();
-  }
-}
-
-function rotateFigure() {
-  figure.rotate(ground);
-}
-
-function speedUp() {
-  figure.speedUp();
-}
-
-function speedNormal() {
-  figure.speedNormal();
-}
-
-window.onkeydown = function keyDown(event) {
-  switch (event.key) {
-    case "ArrowRight":
-      moveRight();
-      break;
-    case "ArrowLeft":
-      moveLeft();
-      break;
-    case "ArrowDown":
-      speedUp();
-      break;
-    case " ":
-      rotateFigure();
-      break;
-  }
-};
-
-window.onkeyup = function keyUp(event) {
-  if (event.key == "ArrowDown") {
-    speedNormal();
-  }
-};
 
 function statistic() {
   gameStatistic.addStrike();

@@ -16,11 +16,6 @@ export default class Statistic {
     ctx.font = "bold 90px sans-serif";
     ctx.fillStyle = "rgba(1, 0, 0, 0.2)";
     ctx.textAlign = "center";
-    // ctx.fillText(
-    //   "strike:",
-    //   Screen.canvasWidth * (4 / 10),
-    //   Screen.canvasHeight * (2 / 5)
-    // );
     ctx.fillText(
       this.strike,
       Screen.canvasWidth * (1 / 2),

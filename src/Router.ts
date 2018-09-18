@@ -1,10 +1,12 @@
 import StartPage from "./Page/Start";
 import GameOver from "./Page/GameOver";
 import Game from "./Game";
+import bindKeyboard from "./bindKeyboard";
 
 const start = new StartPage();
 const gameOver = new GameOver();
 const game = new Game();
+bindKeyboard(game);
 
 class Router {
   protected page;
