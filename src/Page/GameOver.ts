@@ -2,6 +2,8 @@ import Screen, { screenW, screenH } from "../Screen";
 import touchable from "../Touchable";
 import router from "../Router";
 import Button from "./Button";
+import { gameStatistic } from '../Router';
+
 
 export default class StartPage {
   private items;
@@ -13,6 +15,7 @@ export default class StartPage {
     touchable(this.items[0]);
   }
   draw(ctx) {
+    gameStatistic.showMaxResult(ctx)
     this.items.forEach(item => {
       item.draw(ctx);
     });

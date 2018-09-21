@@ -6,8 +6,8 @@ import drawGrid from "./Grid";
 import Screen from "./Screen";
 import router from "./Router";
 import Figure from "./Figure";
+import { gameStatistic } from "./Router";
 
-let gameStatistic = new Statistic();
 const gameOver = () => {
   gameStatistic.gameOver();
 };
@@ -16,21 +16,22 @@ const controls = new Controls();
 
 export default class Game {
   private figure: Figure;
-  private pause: boolean
+  private pause: boolean;
   constructor() {
     controls.leftSide.addActionDown(() => this.moveLeft());
     controls.rightSide.addActionDown(() => this.moveRight());
     this.figure = makeFigure();
-    this.pause = false
+    this.pause = false;
   }
   restart() {
     ground = new Ground([], statistic, gameOver);
     let figure = makeFigure();
-    figure = makeFigure();
-    gameStatistic = new Statistic();
+    gameStatistic.restart();
   }
   drawActiveGame(ctx, figure) {
     gameStatistic.showStatistic(ctx);
+    ctx.font = "bold 70px Arial";
+
     ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
     drawGrid(
       Screen.width,
@@ -46,6 +47,7 @@ export default class Game {
   }
   drawPauseActiveGame(ctx, figure) {
     gameStatistic.showStatistic(ctx);
+    ctx.font = "bold 70px Arial";
     ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
     drawGrid(
       Screen.width,
@@ -59,11 +61,7 @@ export default class Game {
     figure.draw(ctx);
     ground.draw(ctx);
     ctx.textAlign = "center";
-    ctx.fillText(
-     " Pause",
-      Screen.canvasWidth/2,
-      Screen.canvasHeight/2
-    );
+    ctx.fillText(" Pause", Screen.canvasWidth / 2, Screen.canvasHeight / 2);
   }
   drawNotActiveGame(ctx) {
     drawGrid(
@@ -78,7 +76,7 @@ export default class Game {
     ground.draw(ctx);
     setTimeout(() => {
       router.toGameOver();
-    }, 3000);
+    }, 1000);
   }
   draw(ctx, time) {
     ctx.fillStyle = "rgba(1, 0, 0, 0.3)";
@@ -86,10 +84,9 @@ export default class Game {
     if (gameStatistic.active && !this.pause) {
       this.physics(time);
       this.drawActiveGame(ctx, this.figure);
-    } else if(gameStatistic.active && this.pause) {
+    } else if (gameStatistic.active && this.pause) {
       this.drawPauseActiveGame(ctx, this.figure);
-    }
-    else{
+    } else {
       this.drawNotActiveGame(ctx);
     }
   }
@@ -98,11 +95,13 @@ export default class Game {
     if (this.figure.intersects(ground)) {
       this.figure.moveUp();
       ground.addPoints(this.figure.getPoints());
-      this.figure = makeFigure();
+      if (gameStatistic.active) {
+        this.figure = makeFigure();
+      }
     }
   }
   moveLeft() {
-    if(!this.pause){
+    if (!this.pause) {
       this.figure.moveLeft();
       if (this.figure.intersects(ground)) {
         this.figure.moveRight();
@@ -110,15 +109,17 @@ export default class Game {
     }
   }
   moveRight() {
-    if(!this.pause){this.figure.moveRight();
+    if (!this.pause) {
+      this.figure.moveRight();
       if (this.figure.intersects(ground)) {
         this.figure.moveLeft();
-      }}
-    
+      }
+    }
   }
   rotateFigure() {
-    if(!this.pause){this.figure.rotate(ground);}
-    
+    if (!this.pause) {
+      this.figure.rotate(ground);
+    }
   }
   speedUp() {
     this.figure.speedUp();
@@ -126,8 +127,8 @@ export default class Game {
   speedNormal() {
     this.figure.speedNormal();
   }
-  gamePause(){
-    this.pause = !this.pause
+  gamePause() {
+    this.pause = !this.pause;
   }
 }
 

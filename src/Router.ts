@@ -2,10 +2,12 @@ import StartPage from "./Page/Start";
 import GameOver from "./Page/GameOver";
 import Game from "./Game";
 import bindKeyboard from "./bindKeyboard";
+import Statistic from "./Statistic";
 
 const start = new StartPage();
 const gameOver = new GameOver();
 const game = new Game();
+export const gameStatistic = new Statistic();
 bindKeyboard(game);
 
 class Router {

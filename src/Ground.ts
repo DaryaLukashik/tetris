@@ -85,7 +85,7 @@ export default class Ground {
   gameEnd() {
     for (let x = 0; x < Screen.width; x++) {
       if (this.matrix[x][0]) {
-        this.gameOver();
+        return this.gameOver();
       }
     }
   }
