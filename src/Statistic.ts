@@ -25,8 +25,8 @@ export default class Statistic {
     ctx.textAlign = "center";
     ctx.fillText(
       this.strike,
-      Screen.canvasWidth * (1 / 2),
-      Screen.canvasHeight * (1 / 3)
+      Screen.canvasWidth * (6 / 7),
+      Screen.canvasHeight * (1 / 7)
     );
   }
   showMaxResult(ctx) {
@@ -34,7 +34,7 @@ export default class Statistic {
     ctx.fillStyle = "rgba(1, 0, 0, 1)";
     ctx.textAlign = "center";
     ctx.fillText(
-      "Max Resultat",
+      "Max Result",
       Screen.canvasWidth * 0.5,
       Screen.canvasHeight * 0.4
     );
@@ -49,10 +49,6 @@ export default class Statistic {
   gameOver() {
     this.changeMaxResult();
     console.log(this.maxResult);
-    this.active = false;
     this.strike = 0;
-  }
-  restart() {
-    this.active = true;
   }
 }

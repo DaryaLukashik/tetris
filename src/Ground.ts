@@ -1,9 +1,10 @@
 import Screen from "./Screen";
+import Point from "./Point";
 
 export default class Ground {
   private strike;
   private matrix;
-  constructor(private points = [], protected lineDelete, protected gameOver) {
+  constructor(private points = [], private lineDelete, private gameOver) {
     this.strike = 0;
     this.matrix = [];
     for (let x = 0; x < Screen.width; x++) {
@@ -30,6 +31,24 @@ export default class Ground {
   }
   add(point) {
     this.matrix[point.x][point.y] = true;
+  }
+  async fillAllField() {
+    const fillRow = async (y: number, toRight: boolean) => {
+      const start = toRight ? 0 : Screen.width - 1;
+      const finish = toRight ? Screen.width : -1;
+      for (let x = start; x !== finish; toRight ? x++ : x--) {
+        await this.sleep(15);
+        this.add(new Point(x, y));
+      }
+    };
+    for (let y = Screen.height - 1; y >= 0; y--) {
+      await fillRow(y, y % 2 === 0);
+    }
+  }
+  sleep(delay) {
+    return new Promise((res, rej) => {
+      setInterval(res, delay);
+    });
   }
   addPoints(points) {
     points.forEach(p => {

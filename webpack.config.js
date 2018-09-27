@@ -8,7 +8,18 @@ module.exports = {
     path: path.resolve(__dirname)
   },
   module: {
-    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
+    rules: [
+      { test: /\.tsx?$/, loader: "ts-loader" },
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: {}
+          }
+        ]
+      }
+    ]
   },
   resolve: {
     extensions: [".ts", ".js", ".json"]

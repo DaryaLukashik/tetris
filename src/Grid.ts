@@ -9,7 +9,7 @@ export default function drawGrid(
   ctx
 ) {
   function drawLine(p1, p2) {
-    ctx.fillStyle = "rgba(1, 0, 0, 0.5)";
+    ctx.strokeStyle = "rgba(1, 0, 0, 0.5)";
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);

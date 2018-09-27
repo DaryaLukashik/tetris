@@ -37,4 +37,5 @@ function gameLoop() {
   ctx.clearRect(0, 0, Screen.canvasWidth, Screen.canvasHeight);
   ctx.strokeRect(0, 0, Screen.canvasWidth, Screen.canvasHeight);
   router.page.draw(ctx, time);
+  router.page.physics && router.page.physics(time);
 }

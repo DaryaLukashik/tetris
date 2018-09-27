@@ -17,19 +17,29 @@ const controls = new Controls();
 export default class Game {
   private figure: Figure;
   private pause: boolean;
+  private active: boolean;
+  private ground: Ground;
+
   constructor() {
     controls.leftSide.addActionDown(() => this.moveLeft());
     controls.rightSide.addActionDown(() => this.moveRight());
     this.figure = makeFigure();
     this.pause = false;
+    this.active = true;
+    this.ground = new Ground([], statistic, this.gameOver);
   }
+  gameOver = async () => {
+    this.active = false;
+    gameStatistic.gameOver();
+    await this.ground.fillAllField();
+    router.toGameOver();
+  };
   restart() {
-    ground = new Ground([], statistic, gameOver);
-    let figure = makeFigure();
-    gameStatistic.restart();
+    this.ground = new Ground([], statistic, this.gameOver);
+    this.figure = makeFigure();
+    this.active = true;
   }
   drawActiveGame(ctx, figure) {
-    gameStatistic.showStatistic(ctx);
     ctx.font = "bold 70px Arial";
 
     ctx.fillStyle = "rgba(1, 0, 0, 0.8)";
@@ -42,8 +52,11 @@ export default class Game {
       Screen.screenHeight,
       ctx
     );
+    this.ground.draw(ctx);
+    if (this.active) {
     figure.draw(ctx);
-    ground.draw(ctx);
+      gameStatistic.showStatistic(ctx);
+    }
   }
   drawPauseActiveGame(ctx, figure) {
     gameStatistic.showStatistic(ctx);
@@ -59,43 +72,28 @@ export default class Game {
       ctx
     );
     figure.draw(ctx);
-    ground.draw(ctx);
+    this.ground.draw(ctx);
     ctx.textAlign = "center";
     ctx.fillText(" Pause", Screen.canvasWidth / 2, Screen.canvasHeight / 2);
-  }
-  drawNotActiveGame(ctx) {
-    drawGrid(
-      Screen.width,
-      Screen.height,
-      Screen.cellWidth,
-      Screen.cellHeight,
-      Screen.screenWidth,
-      Screen.screenHeight,
-      ctx
-    );
-    ground.draw(ctx);
-    setTimeout(() => {
-      router.toGameOver();
-    }, 1000);
   }
   draw(ctx, time) {
     ctx.fillStyle = "rgba(1, 0, 0, 0.3)";
     ctx.strokeRect(0, 0, Screen.screenWidth, Screen.screenHeight);
-    if (gameStatistic.active && !this.pause) {
-      this.physics(time);
+    if (!this.pause) {
       this.drawActiveGame(ctx, this.figure);
-    } else if (gameStatistic.active && this.pause) {
-      this.drawPauseActiveGame(ctx, this.figure);
     } else {
-      this.drawNotActiveGame(ctx);
+      this.drawPauseActiveGame(ctx, this.figure);
     }
   }
   physics(time) {
+    if (this.pause || !this.active) {
+      return;
+    }
     this.figure.moveDown(time);
-    if (this.figure.intersects(ground)) {
+    if (this.figure.intersects(this.ground)) {
       this.figure.moveUp();
-      ground.addPoints(this.figure.getPoints());
-      if (gameStatistic.active) {
+      this.ground.addPoints(this.figure.getPoints());
+      if (this.active) {
         this.figure = makeFigure();
       }
     }
@@ -103,7 +101,7 @@ export default class Game {
   moveLeft() {
     if (!this.pause) {
       this.figure.moveLeft();
-      if (this.figure.intersects(ground)) {
+      if (this.figure.intersects(this.ground)) {
         this.figure.moveRight();
       }
     }
@@ -111,14 +109,14 @@ export default class Game {
   moveRight() {
     if (!this.pause) {
       this.figure.moveRight();
-      if (this.figure.intersects(ground)) {
+      if (this.figure.intersects(this.ground)) {
         this.figure.moveLeft();
       }
     }
   }
   rotateFigure() {
     if (!this.pause) {
-      this.figure.rotate(ground);
+      this.figure.rotate(this.ground);
     }
   }
   speedUp() {
